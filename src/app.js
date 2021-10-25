@@ -90,9 +90,9 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
 
             // Установить рабочий каталог | Install the working directory
             resolve({
-                root: `src/storage/disk`,
-                fs: new MyFileSystem(),
-                cwd: '/src/'
+                fs: new MyFileSystem(connection,{
+                    root: `src/storage/disk`,
+                })
             })
 
         } else {
