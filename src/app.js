@@ -1,5 +1,5 @@
 require('dotenv').config()
-const FtpSrv = require('ftp-srv');
+const {FtpSrv, FileSystem} = require('ftp-srv');
 const User = require('./user')
 const winston = require('winston');
 
@@ -15,9 +15,26 @@ const logger = winston.createLogger({
     ],
 });
 
+class MyFileSystem extends FileSystem {
+    constructor() {
+        super(...arguments);
+    }
+
+    mkdir(path) {
+        super.mkdir(...arguments);
+        logger.log('info', {
+            event: "catalog:delete",
+            path: path,
+            src_ip: '',
+            src_port: ''
+        });
+    }
+}
+
 ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
     if (process.env.METHOD_AUTHORIZATION === 'normal') {
         const user = new User(username, password)
+
 
         // проверка | check
         if (user.isLogin()) {
@@ -29,7 +46,7 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
                 logger.log('info', {
                     event: "file:upload",
                     path: fileName,
-                    src_ip: '',
+                    src_ip: connection.ip,
                     src_port: ''
                 });
             });
@@ -72,7 +89,11 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
             });
 
             // Установить рабочий каталог | Install the working directory
-            resolve({root: `src/disk`})
+            resolve({
+                root: `src/storage/disk`,
+                fs: new MyFileSystem(),
+                cwd: '/src/'
+            })
 
         } else {
             reject({message: user.getError()})

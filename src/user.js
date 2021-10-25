@@ -4,6 +4,8 @@ class User {
     _error = []
 
     constructor(username, password) {
+        this.username = username
+        this.password = password
     }
 
     isLogin() {
