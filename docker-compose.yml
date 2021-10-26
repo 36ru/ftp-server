@@ -4,7 +4,7 @@ services:
   app:
     container_name: ftp_test
     build:
-      dockerfile: ./Dockerfile
+      context: .
     volumes:
       - "d:/app:/storage"
     ports:
