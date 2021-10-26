@@ -2,17 +2,9 @@ require('dotenv').config()
 const {FtpSrv} = require('ftp-srv');
 const CustomFileSystem = require('./custom-file-system')
 const UserRepository = require('./user')
-const winston = require('winston');
+const logger = require('./logger');
 
 const ftpServer = new FtpSrv();
-
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.File({filename: 'src/storage/logs/events.log'}),
-    ],
-});
 
 const repository = new UserRepository()
 
