@@ -6,21 +6,21 @@ const logger = require('./logger');
 
 const ftpServer = new FtpSrv();
 
-const repository = new UserRepository()
+const repository = new UserRepository();
 
 ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
     // проверка | check
-    const MODE = process.env.METHOD_AUTHORIZATION
+    const MODE = process.env.METHOD_AUTHORIZATION;
 
     // если разрешены только пользователи
     if (MODE === 'normal' && !repository.access(username, password)) {
-        reject(new Error('Not authorization!'))
+        reject(new Error('Not authorization!'));
     }
 
     //если у нас разрешены анонимы и пользователи
     if (MODE === 'anonymous') {
         if (username !== 'anonymous' && !repository.access(username, password)) {
-            reject(new Error('Not authorization!'))
+            reject(new Error('Not authorization!'));
         }
     }
 
@@ -41,7 +41,7 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
         logger.log('info', {
             event: "file:download",
             path: fileName,
-            src_ip: '',
+            src_ip: connection.ip,
             src_port: ''
         });
     });
@@ -51,12 +51,12 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
         fs: new CustomFileSystem(connection, {
             root: `src/storage/disk`,
         })
-    })
+    });
 
-})
+});
 
 ftpServer.on('client-error', ({connection, context, error}) => {
-    console.log(error.message)
+    console.log(error.message);
 });
 
 
