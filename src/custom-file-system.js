@@ -14,8 +14,7 @@ class CustomFileSystem extends FileSystem {
             logger.log('info', {
                 event: "dir:create",
                 path: res,
-                src_ip: this.connection.ip,
-                src_port: ''
+                src_ip: this.connection.ip
             });
             return res;
         });
@@ -27,8 +26,7 @@ class CustomFileSystem extends FileSystem {
             logger.log('info', {
                 event: stat.isDirectory() ? "dir:delete" : "file:delete",
                 path: fsPath,
-                src_ip: this.connection.ip,
-                src_port: ''
+                src_ip: this.connection.ip
             });
         }).then(() => {
             return super.delete(path);
@@ -41,8 +39,7 @@ class CustomFileSystem extends FileSystem {
             logger.log('info', {
                 event: stat.isDirectory() ? "dir:rename" : "file:rename",
                 path: fsPath,
-                src_ip: this.connection.ip,
-                src_port: ''
+                src_ip: this.connection.ip
             });
         }).then(() => {
             return super.rename(from, to);

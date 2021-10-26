@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  app:
+    container_name: ftp_test
+    build:
+      dockerfile: ./Dockerfile
+    volumes:
+      - "d:/app:/storage"
+    ports:
+      - "21:21"
+      - "4000-5000:4000-5000"

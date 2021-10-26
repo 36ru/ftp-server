@@ -8,5 +8,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 21
+EXPOSE 4000-5000:4000-5000
+EXPOSE 21:21
+
 CMD [ "npm", "run", "start"]
