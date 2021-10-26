@@ -4,7 +4,11 @@ const CustomFileSystem = require('./custom-file-system')
 const UserRepository = require('./user')
 const logger = require('./logger');
 
-const ftpServer = new FtpSrv();
+const ftpServer = new FtpSrv({
+    pasv_url: '0.0.0.0',
+    pasv_min: 5000,
+    pasv_max: 5005
+});
 
 const repository = new UserRepository();
 
