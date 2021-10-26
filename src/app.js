@@ -10,8 +10,18 @@ const repository = new UserRepository()
 
 ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
     // проверка | check
-    if (!repository.access(username, password)) {
+    const MODE = process.env.METHOD_AUTHORIZATION
+
+    // если разрешены только пользователи
+    if (MODE === 'normal' && !repository.access(username, password)) {
         reject(new Error('Not authorization!'))
+    }
+
+    //если у нас разрешены анонимы и пользователи
+    if (MODE === 'anonymous') {
+        if (username !== 'anonymous' && !repository.access(username, password)) {
+            reject(new Error('Not authorization!'))
+        }
     }
 
     // Работа с файлами | Working with files
