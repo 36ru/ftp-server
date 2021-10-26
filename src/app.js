@@ -1,11 +1,10 @@
 require('dotenv').config()
 const {FtpSrv, FileSystem} = require('ftp-srv');
+const CustomFileSystem = require('./custom-file-system')
 const User = require('./user')
 const winston = require('winston');
 
-const ftpServer = new FtpSrv({
-    blacklist: []
-});
+const ftpServer = new FtpSrv();
 
 const logger = winston.createLogger({
     level: 'info',
@@ -14,22 +13,6 @@ const logger = winston.createLogger({
         new winston.transports.File({filename: 'src/storage/logs/events.log'}),
     ],
 });
-
-class MyFileSystem extends FileSystem {
-    constructor() {
-        super(...arguments);
-    }
-
-    mkdir(path) {
-        super.mkdir(...arguments);
-        logger.log('info', {
-            event: "catalog:delete",
-            path: path,
-            src_ip: '',
-            src_port: ''
-        });
-    }
-}
 
 ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
     if (process.env.METHOD_AUTHORIZATION === 'normal') {
@@ -61,36 +44,9 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
                 });
             });
 
-            // удаление | delete
-            connection.on('DELE', (error, fileName) => {
-                logger.log('info', {
-                    event: "file:delete",
-                    path: fileName,
-                    src_ip: '',
-                    src_port: ''
-                });
-            });
-
-            // Работа с каталогами | Working with catalogs
-
-            // создать | create
-            connection.on('MKD', (error, fileName) => {
-                console.log('Создать каталог')
-            });
-
-            // удалить | delete
-            connection.on('RMD', (error, fileName) => {
-                console.log('Удалить каталог')
-            });
-
-            // переименовать во что | rename
-            connection.on('RNTO', (error, fileName) => {
-                console.log('Переименовано')
-            });
-
             // Установить рабочий каталог | Install the working directory
             resolve({
-                fs: new MyFileSystem(connection,{
+                fs: new CustomFileSystem(connection,{
                     root: `src/storage/disk`,
                 })
             })
@@ -99,7 +55,11 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => {
             reject({message: user.getError()})
         }
     } else {
-        resolve({root: `src/disk`})
+        resolve({
+            fs: new CustomFileSystem(connection,{
+                root: `src/storage/disk`,
+            })
+        })
     }
 })
 
