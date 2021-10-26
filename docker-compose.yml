@@ -6,7 +6,7 @@ services:
     build:
       context: .
     volumes:
-      - "d:/app:/storage"
+      - "c:/app:/storage"
     ports:
       - "21:21"
       - "4000-5000:4000-5000"
