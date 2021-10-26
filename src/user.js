@@ -1,20 +1,34 @@
-class User {
-    username = ''
-    password = ''
-    _error = []
+const path = require('path');
+const fs = require('fs-extra');
 
-    constructor(username, password) {
-        this.username = username
-        this.password = password
+class UserRepository {
+    _users = [];
+    _file = '';
+
+    constructor(usersFile = './src/storage/users.dat') {
+        this._file = path.resolve(usersFile);
     }
 
-    isLogin() {
-        return true
+    load() {
+        return fs.readFile(this._file).then((data) => {
+            this._users = data.toString().split(/\r\n|\r|\n/g).map((line) => {
+                line = line.split(':');
+                if (!line.length) {
+                    return null;
+                }
+                return {
+                    login: line[0],
+                    password: line[1]
+                }
+            }).filter(Boolean);
+        });
     }
 
-    getError() {
-        return this._error
+    access(login, password) {
+        return this._users.some((user) => {
+            return user.login === login && user.password === password;
+        })
     }
 }
 
-module.exports = User
+module.exports = UserRepository;
