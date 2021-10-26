@@ -12,3 +12,5 @@ services:
     ports:
       - "21:21"
       - "4000-5000:4000-5000"
+    environment:
+      METHOD_AUTH: "normal"
