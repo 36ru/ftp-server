@@ -56,7 +56,7 @@ const publicIp = require('public-ip');
         // Установить рабочий каталог | Install the working directory
         resolve({
             fs: new CustomFileSystem(connection, {
-                root: `storage`,
+                root: `/storage`,
             })
         });
 
