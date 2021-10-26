@@ -4,7 +4,7 @@ const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     transports: [
-        new winston.transports.File({filename: 'src/storage/logs/events.log'}),
+        new winston.transports.File({filename: '/logs/events.log'}),
     ],
 });
 

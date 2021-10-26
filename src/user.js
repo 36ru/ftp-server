@@ -5,7 +5,7 @@ class UserRepository {
     _users = [];
     _file = '';
 
-    constructor(usersFile = './src/storage/users.dat') {
+    constructor(usersFile = '/users/users.dat') {
         this._file = path.resolve(usersFile);
     }
 
