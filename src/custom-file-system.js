@@ -9,41 +9,36 @@ class CustomFileSystem extends FileSystem {
         super(connection, path);
     }
 
-    mkdir(path) {
-        return super.mkdir(path).then(res => {
-            logger.log('info', {
-                event: "dir:create",
-                path: res,
-                src_ip: this.connection.ip
-            });
-            return res;
+    async mkdir(path) {
+        const res = await super.mkdir(path);
+        logger.log('info', {
+            event: "dir:create",
+            path: res,
+            src_ip: this.connection.ip
         });
+        return res;
     }
 
-    delete(path) {
-        const {fsPath} = this._resolvePath(path);
-        return fsStatAsync(fsPath).then((stat) => {
-            logger.log('info', {
-                event: stat.isDirectory() ? "dir:delete" : "file:delete",
-                path: fsPath,
-                src_ip: this.connection.ip
-            });
-        }).then(() => {
-            return super.delete(path);
+    async delete(path) {
+        const { fsPath } = this._resolvePath(path);
+        const stat = await fsStatAsync(fsPath);
+        logger.log('info', {
+            event: stat.isDirectory() ? "dir:delete" : "file:delete",
+            path: fsPath,
+            src_ip: this.connection.ip
         });
+        return super.delete(path);
     }
 
-    rename(from, to) {
-        const {fsPath} = this._resolvePath(from);
-        return fsStatAsync(fsPath).then((stat) => {
-            logger.log('info', {
-                event: stat.isDirectory() ? "dir:rename" : "file:rename",
-                path: fsPath,
-                src_ip: this.connection.ip
-            });
-        }).then(() => {
-            return super.rename(from, to);
+    async rename(from, to) {
+        const { fsPath } = this._resolvePath(from);
+        const stat = await fsStatAsync(fsPath);
+        logger.log('info', {
+            event: stat.isDirectory() ? "dir:rename" : "file:rename",
+            path: fsPath,
+            src_ip: this.connection.ip
         });
+        return super.rename(from, to);
     }
 }
 

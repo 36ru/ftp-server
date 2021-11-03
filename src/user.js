@@ -9,19 +9,18 @@ class UserRepository {
         this._file = path.resolve(usersFile);
     }
 
-    load() {
-        return fs.readFile(this._file).then((data) => {
-            this._users = data.toString().split(/\r\n|\r|\n/g).map((line) => {
-                line = line.split(':');
-                if (!line.length) {
-                    return null;
-                }
-                return {
-                    login: line[0],
-                    password: line[1]
-                }
-            }).filter(Boolean);
-        });
+    async load() {
+        let data = await fs.readFile(this._file);
+        this._users = data.toString().split(/\r\n|\r|\n/g).map((line) => {
+            line = line.split(':');
+            if (!line.length) {
+                return null;
+            }
+            return {
+                login: line[0],
+                password: line[1]
+            }
+        }).filter(Boolean);
     }
 
     access(login, password) {
